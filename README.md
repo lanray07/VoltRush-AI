@@ -18,6 +18,12 @@ VoltRush AI is a SwiftUI iOS learning simulator for electricians, apprentices, c
 
 The app stores mock progress locally with `UserDefaults`. A privacy manifest is included because Apple requires declared reasons for required-reason APIs such as `UserDefaults`.
 
+## GitHub App Store Upload
+
+This repo includes a manual GitHub Actions workflow, `iOS App Store Upload`, that archives the app on a macOS runner and uploads the IPA to App Store Connect. Add the Apple signing/API secrets listed in `.github/APP_STORE_UPLOAD_SECRETS.md`, then run the workflow from the GitHub Actions tab.
+
+The workflow uses bundle ID `com.voltrushai.app`, scheme `VoltRushAI`, and increments the build number from the GitHub Actions run number.
+
 ## App Structure
 
 - `VoltRushAI/App`: app entry, tab shell, theme
