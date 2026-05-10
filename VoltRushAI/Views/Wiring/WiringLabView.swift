@@ -163,10 +163,10 @@ struct WiringLabView: View {
         viewModel.selectedPuzzle.nodes.first { $0.id == id }
     }
 
-    private func nearestNode(to point: CGPoint, in size: CGSize, excluding source: CircuitNode) -> CircuitNode? {
+    private func nearestNode(to location: CGPoint, in size: CGSize, excluding source: CircuitNode) -> CircuitNode? {
         viewModel.selectedPuzzle.nodes
             .filter { $0.id != source.id }
-            .map { ($0, distance(point, point(for: $0, in: size))) }
+            .map { ($0, distance(location, point(for: $0, in: size))) }
             .filter { $0.1 < 70 }
             .min { $0.1 < $1.1 }?
             .0
