@@ -1,0 +1,34 @@
+[
+  {
+    "id": "com.voltrushai.premium.monthly",
+    "displayName": "Monthly Premium",
+    "type": "autoRenewableSubscription",
+    "pricePlaceholder": "GBP 9.99/month"
+  },
+  {
+    "id": "com.voltrushai.premium.yearly",
+    "displayName": "Yearly Premium",
+    "type": "autoRenewableSubscription",
+    "pricePlaceholder": "GBP 79.99/year"
+  },
+  {
+    "id": "com.voltrushai.pack.ukwiring",
+    "displayName": "UK Wiring Pack",
+    "type": "nonConsumable"
+  },
+  {
+    "id": "com.voltrushai.pack.nec",
+    "displayName": "NEC Pack",
+    "type": "nonConsumable"
+  },
+  {
+    "id": "com.voltrushai.pack.solar_ev",
+    "displayName": "Solar & EV Pack",
+    "type": "nonConsumable"
+  },
+  {
+    "id": "com.voltrushai.coins.small",
+    "displayName": "Coin Pack",
+    "type": "consumable"
+  }
+]
