@@ -12,7 +12,7 @@ env:
 jobs:
   upload:
     name: Archive and Upload to App Store Connect
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 60
 
     steps:
@@ -20,7 +20,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Show Xcode version
-        run: xcodebuild -version
+        shell: bash
+        run: |
+          XCODE_26_PATH="$(find /Applications -maxdepth 1 -name 'Xcode_26*.app' -print | sort | tail -n 1)"
+          if [ -z "$XCODE_26_PATH" ]; then
+            echo "::error::Xcode 26 is required for App Store uploads, but no Xcode_26*.app was found."
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE_26_PATH/Contents/Developer"
+          xcodebuild -version
 
       - name: Validate required secrets
         shell: bash
