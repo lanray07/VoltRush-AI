@@ -14,7 +14,7 @@ Add these repository secrets in GitHub:
 | `APP_STORE_CONNECT_API_KEY_ID` | App Store Connect API key ID. |
 | `APP_STORE_CONNECT_API_ISSUER_ID` | App Store Connect API issuer ID. |
 | `APP_STORE_CONNECT_API_PRIVATE_KEY` | Full contents of the `.p8` private key file, including the `BEGIN PRIVATE KEY` and `END PRIVATE KEY` lines. |
-| `IOS_DISTRIBUTION_CERTIFICATE_BASE64` | Base64-encoded `.p12` Apple Distribution certificate. |
+| `IOS_DISTRIBUTION_CERTIFICATE_BASE64` | Base64-encoded `.p12` Apple Distribution or iOS Distribution certificate. |
 | `IOS_DISTRIBUTION_CERTIFICATE_PASSWORD` | Password used when exporting the `.p12` certificate. |
 | `IOS_PROVISIONING_PROFILE_BASE64` | Base64-encoded App Store provisioning profile for `com.voltrushai.app`. |
 | `KEYCHAIN_PASSWORD` | Any strong temporary password used by the workflow to create its signing keychain. |
@@ -31,7 +31,7 @@ Use a key with enough access to manage app builds and TestFlight/App Store uploa
 
 GitHub-hosted macOS runners do not have your Apple signing certificate or App Store provisioning profile. Create/export these from Apple Developer/Xcode:
 
-1. Create or use an `Apple Distribution` certificate.
+1. Create or use an `Apple Distribution` certificate. If your account has reached Apple's limit for that certificate type, create `iOS Distribution (App Store Connect and Ad Hoc)` instead.
 2. Export it from Keychain Access as a password-protected `.p12`.
 3. Create an App Store provisioning profile for bundle ID `com.voltrushai.app`.
 4. Download the `.mobileprovision` profile.
