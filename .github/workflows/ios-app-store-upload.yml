@@ -22,13 +22,17 @@ jobs:
       - name: Show Xcode version
         shell: bash
         run: |
-          XCODE_26_PATH="$(find /Applications -maxdepth 1 -name 'Xcode_26*.app' -print | sort | tail -n 1)"
-          if [ -z "$XCODE_26_PATH" ]; then
-            echo "::error::Xcode 26 is required for App Store uploads, but no Xcode_26*.app was found."
+          XCODE_26_PATH="/Applications/Xcode.app"
+          if [ ! -d "$XCODE_26_PATH" ]; then
+            echo "::error::Xcode 26 is required for App Store uploads, but /Applications/Xcode.app was not found."
             exit 1
           fi
           sudo xcode-select -s "$XCODE_26_PATH/Contents/Developer"
           xcodebuild -version
+          xcodebuild -showsdks | grep -q 'iphoneos26' || {
+            echo "::error::Selected Xcode does not include an iOS 26 SDK."
+            exit 1
+          }
 
       - name: Validate required secrets
         shell: bash
