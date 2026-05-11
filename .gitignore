@@ -16,3 +16,10 @@ Package.resolved
 # Local env
 .env
 .env.*
+
+# Apple signing/API keys
+*.p8
+*.p8.txt
+*.p12
+*.mobileprovision
+AuthKey_*
