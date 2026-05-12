@@ -64,7 +64,7 @@ struct PremiumShopView: View {
 
     private var productList: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionTitle(title: "Products", subtitle: "Placeholder prices. Configure real products in App Store Connect before release.")
+            SectionTitle(title: "Products", subtitle: "Purchases are securely processed by Apple. Tap any product to continue with the App Store purchase sheet.")
             ForEach(storeService.products) { product in
                 NeonCard {
                     VStack(alignment: .leading, spacing: 10) {
@@ -90,9 +90,13 @@ struct PremiumShopView: View {
                         Text(product.description)
                             .font(.subheadline)
                             .foregroundStyle(VoltTheme.mutedText)
+                        Text(product.id)
+                            .font(.caption2.monospaced())
+                            .foregroundStyle(VoltTheme.mutedText.opacity(0.75))
                         PrimaryActionButton(title: "Choose", systemImage: "cart.fill") {
                             Task { await storeService.purchase(product, appModel: appModel) }
                         }
+                        .disabled(storeService.isLoading)
                     }
                 }
             }
@@ -114,13 +118,13 @@ struct PremiumShopView: View {
     private var legalLinks: some View {
         NeonCard {
             VStack(alignment: .leading, spacing: 10) {
-                Text("Subscriptions renew automatically unless cancelled in App Store account settings. Purchases use Apple in-app purchase when StoreKit is connected.")
+                Text("Subscriptions renew automatically unless cancelled in App Store account settings. All purchases use Apple's in-app purchase system.")
                     .font(.footnote)
                     .foregroundStyle(VoltTheme.mutedText)
                 HStack {
-                    Link("Terms", destination: URL(string: "https://example.com/terms")!)
+                    Link("Terms", destination: URL(string: "https://github.com/lanray07/VoltRush-AI")!)
                     Spacer()
-                    Link("Privacy", destination: URL(string: "https://example.com/privacy")!)
+                    Link("Privacy", destination: URL(string: "https://github.com/lanray07/VoltRush-AI/blob/main/PRIVACY_POLICY.md")!)
                 }
                 .foregroundStyle(VoltTheme.neonBlue)
             }

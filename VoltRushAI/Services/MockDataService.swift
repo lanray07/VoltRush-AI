@@ -151,7 +151,7 @@ struct MockDataService {
             StoreProduct(id: "com.voltrushai.pack.ukwiring", displayName: "UK Wiring Pack", priceText: "One-time purchase", kind: .nonConsumable, description: "Extra UK wiring regulation quizzes, missions, and wiring puzzles.", isFeatured: false),
             StoreProduct(id: "com.voltrushai.pack.nec", displayName: "NEC Pack", priceText: "One-time purchase", kind: .nonConsumable, description: "Extra NEC-focused practice content and fault diagnosis missions.", isFeatured: false),
             StoreProduct(id: "com.voltrushai.pack.solar_ev", displayName: "Solar & EV Pack", priceText: "One-time purchase", kind: .nonConsumable, description: "Advanced solar inverter and EV charger simulations.", isFeatured: false),
-            StoreProduct(id: "com.voltrushai.coins.small", displayName: "Coin Pack", priceText: "Consumable", kind: .consumable, description: "Virtual coins for cosmetic boosts and simulator shop items.", isFeatured: false)
+            StoreProduct(id: "com.voltrushai.coins.small", displayName: "Small Coin Pack", priceText: "Consumable", kind: .consumable, description: "Virtual coins for cosmetic boosts and simulator shop items.", isFeatured: false)
         ]
 
         toolItems = [

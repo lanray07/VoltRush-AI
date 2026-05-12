@@ -4,8 +4,11 @@ import StoreKit
 @MainActor
 final class StoreService: ObservableObject {
     @Published private(set) var products: [StoreProduct] = MockDataService.shared.storeProducts
+    @Published private(set) var availableProductIDs: Set<String> = []
     @Published var isLoading = false
     @Published var lastStoreMessage: String?
+
+    private var storeKitProducts: [String: Product] = [:]
 
     let productIDs: Set<String> = [
         "com.voltrushai.premium.monthly",
@@ -20,22 +23,57 @@ final class StoreService: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        // TODO: Replace placeholder products with StoreKit.Product.products(for:) after App Store Connect products exist.
-        products = MockDataService.shared.storeProducts
+        do {
+            let fetchedProducts = try await Product.products(for: Array(productIDs))
+            storeKitProducts = Dictionary(uniqueKeysWithValues: fetchedProducts.map { ($0.id, $0) })
+            availableProductIDs = Set(fetchedProducts.map(\.id))
+            products = MockDataService.shared.storeProducts.map { localProduct in
+                guard let storeProduct = storeKitProducts[localProduct.id] else {
+                    return localProduct
+                }
+                return StoreProduct(
+                    id: localProduct.id,
+                    displayName: storeProduct.displayName.isEmpty ? localProduct.displayName : storeProduct.displayName,
+                    priceText: storeProduct.displayPrice,
+                    kind: localProduct.kind,
+                    description: localProduct.description,
+                    isFeatured: localProduct.isFeatured
+                )
+            }
+        } catch {
+            storeKitProducts = [:]
+            availableProductIDs = []
+            products = MockDataService.shared.storeProducts
+            lastStoreMessage = "The App Store is temporarily unavailable. Please try again."
+        }
     }
 
     func purchase(_ product: StoreProduct, appModel: AppViewModel) async {
         isLoading = true
         defer { isLoading = false }
 
-        // TODO: Connect to StoreKit purchase flow and validate Transaction.currentEntitlements.
-        switch product.kind {
-        case .autoRenewableSubscription, .nonConsumable:
-            appModel.setPremiumUnlocked(true)
-            lastStoreMessage = "\(product.displayName) simulated. Premium features unlocked locally."
-        case .consumable:
-            appModel.addCoins(500)
-            lastStoreMessage = "Coin pack simulated. 500 coins added."
+        guard let storeProduct = storeKitProducts[product.id] else {
+            lastStoreMessage = "\(product.displayName) is not available from the App Store yet. Please try again later."
+            return
+        }
+
+        do {
+            let result = try await storeProduct.purchase()
+            switch result {
+            case .success(let verification):
+                let transaction = try checkVerified(verification)
+                applyEntitlement(for: transaction.productID, appModel: appModel)
+                await transaction.finish()
+                lastStoreMessage = "\(product.displayName) purchase completed."
+            case .pending:
+                lastStoreMessage = "\(product.displayName) purchase is pending approval."
+            case .userCancelled:
+                lastStoreMessage = "Purchase cancelled."
+            @unknown default:
+                lastStoreMessage = "The purchase could not be completed. Please try again."
+            }
+        } catch {
+            lastStoreMessage = "The purchase could not be completed. Please try again."
         }
     }
 
@@ -43,8 +81,40 @@ final class StoreService: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        // TODO: Call AppStore.sync() and re-check verified entitlements for production.
-        appModel.setPremiumUnlocked(appModel.profile.isPremium)
-        lastStoreMessage = "Restore checked locally. Connect StoreKit before App Store submission."
+        do {
+            try await AppStore.sync()
+            var restoredCount = 0
+            for await result in Transaction.currentEntitlements {
+                let transaction = try checkVerified(result)
+                if productIDs.contains(transaction.productID) {
+                    applyEntitlement(for: transaction.productID, appModel: appModel)
+                    restoredCount += 1
+                }
+            }
+            lastStoreMessage = restoredCount == 0 ? "No previous purchases were found." : "Purchases restored."
+        } catch {
+            lastStoreMessage = "Restore could not be completed. Please try again."
+        }
     }
+
+    private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+        switch result {
+        case .verified(let safe):
+            return safe
+        case .unverified:
+            throw StoreError.failedVerification
+        }
+    }
+
+    private func applyEntitlement(for productID: String, appModel: AppViewModel) {
+        if productID == "com.voltrushai.coins.small" {
+            appModel.addCoins(500)
+        } else {
+            appModel.setPremiumUnlocked(true)
+        }
+    }
+}
+
+private enum StoreError: Error {
+    case failedVerification
 }
