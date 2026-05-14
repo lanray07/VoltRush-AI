@@ -44,7 +44,7 @@ The workflow uses bundle ID `com.voltrushai.app`, scheme `VoltRushAI`, and incre
 - Quiz Arena with practice, timed, and boss battle modes
 - PvP-style local Fault Battle against an AI opponent
 - AI Mentor chat using local mock responses
-- StoreKit-ready paywall with product IDs, restore button, terms/privacy links, and transparent placeholders
+- StoreKit-ready paywall with product IDs, restore button, subscription disclosures, and terms/privacy links
 - Contractor Business Mode with jobs, tools, van/team upgrades, virtual money, and reputation
 
 ## Production TODOs
@@ -56,7 +56,7 @@ The workflow uses bundle ID `com.voltrushai.app`, scheme `VoltRushAI`, and incre
 - Expand local/mock data into reviewed learning content for each jurisdiction.
 - Add unit tests for scoring, mission rewards, StoreKit entitlement handling, and profile persistence.
 - Add UI tests for onboarding, mission completion, quiz flow, paywall restore, and disclaimer acceptance.
-- Replace placeholder Terms and Privacy URLs.
+- Keep the App Store description aligned with the in-app Terms of Use and Privacy Policy links.
 
 ## Safety Disclaimer
 

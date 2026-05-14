@@ -3,6 +3,8 @@ import SwiftUI
 struct PremiumShopView: View {
     @EnvironmentObject private var appModel: AppViewModel
     @EnvironmentObject private var storeService: StoreService
+    private let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+    private let privacyURL = URL(string: "https://github.com/lanray07/VoltRush-AI/blob/main/PRIVACY_POLICY.md")!
 
     var body: some View {
         ZStack {
@@ -64,7 +66,7 @@ struct PremiumShopView: View {
 
     private var productList: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionTitle(title: "Products", subtitle: "Purchases are securely processed by Apple. Tap any product to continue with the App Store purchase sheet.")
+            SectionTitle(title: "Products", subtitle: "Purchases are securely processed by Apple. Subscription prices, durations, renewal details, and legal links are shown before purchase.")
             ForEach(storeService.products) { product in
                 NeonCard {
                     VStack(alignment: .leading, spacing: 10) {
@@ -90,6 +92,9 @@ struct PremiumShopView: View {
                         Text(product.description)
                             .font(.subheadline)
                             .foregroundStyle(VoltTheme.mutedText)
+                        if product.kind == .autoRenewableSubscription {
+                            subscriptionTerms(for: product)
+                        }
                         Text(product.id)
                             .font(.caption2.monospaced())
                             .foregroundStyle(VoltTheme.mutedText.opacity(0.75))
@@ -122,12 +127,44 @@ struct PremiumShopView: View {
                     .font(.footnote)
                     .foregroundStyle(VoltTheme.mutedText)
                 HStack {
-                    Link("Terms", destination: URL(string: "https://github.com/lanray07/VoltRush-AI")!)
+                    Link("Terms of Use (EULA)", destination: termsURL)
                     Spacer()
-                    Link("Privacy", destination: URL(string: "https://github.com/lanray07/VoltRush-AI/blob/main/PRIVACY_POLICY.md")!)
+                    Link("Privacy Policy", destination: privacyURL)
                 }
                 .foregroundStyle(VoltTheme.neonBlue)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func subscriptionTerms(for product: StoreProduct) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Label("Auto-renewable subscription", systemImage: "repeat.circle.fill")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(VoltTheme.neonBlue)
+            Text("Length: \(subscriptionLength(for: product))")
+            Text("Price: \(product.priceText)")
+            Text("Renews automatically until cancelled. Manage or cancel in your App Store account settings.")
+            HStack {
+                Link("Terms of Use (EULA)", destination: termsURL)
+                Spacer()
+                Link("Privacy Policy", destination: privacyURL)
+            }
+        }
+        .font(.caption)
+        .foregroundStyle(VoltTheme.mutedText)
+        .padding(10)
+        .background(VoltTheme.surface.opacity(0.7), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    private func subscriptionLength(for product: StoreProduct) -> String {
+        switch product.id {
+        case "com.voltrushai.premium.monthly":
+            return "1 month"
+        case "com.voltrushai.premium.yearly":
+            return "1 year"
+        default:
+            return "Shown on the App Store purchase sheet"
         }
     }
 }

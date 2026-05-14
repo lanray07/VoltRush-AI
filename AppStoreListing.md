@@ -18,6 +18,8 @@ Practice safe diagnostic thinking with scenarios such as dead sockets, tripping 
 
 VoltRush AI is an educational simulator only. It does not replace formal electrician training, licensing, certification, manufacturer instructions, local regulations, workplace procedures, or qualified professional guidance.
 
+Terms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+
 ## Keywords
 
 electrician, apprentice, electrical, wiring, fault finding, multimeter, EV charger, solar, quiz, training, simulator, safety, inspection, contractor, circuits
@@ -43,7 +45,7 @@ Premium unlocks unlimited missions, advanced fault scenarios, AI Mentor, certifi
 - Configure App Store Connect product IDs and optional StoreKit test configuration.
 - Replace local AI Mentor mock with production AI service or clearly keep it as offline educational hints.
 - Review all educational content with qualified electricians for each supported jurisdiction.
-- Add final Terms of Use and Privacy Policy URLs.
+- Confirm the App Store description includes the Terms of Use (EULA) URL.
 - Verify privacy nutrition labels match actual data practices.
 - Run onboarding, paywall, restore purchases, mission, quiz, wiring, and fault diagnosis UI tests.
 - Confirm disclaimer is visible before app use.
