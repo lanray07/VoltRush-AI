@@ -34,7 +34,11 @@ enum AppTab: String, CaseIterable, Identifiable {
 }
 
 struct AppShellView: View {
-    @State private var selectedTab: AppTab = .home
+    @State private var selectedTab: AppTab
+
+    init() {
+        _selectedTab = State(initialValue: ReviewDemoMode.isEnabled ? .shop : .home)
+    }
 
     var body: some View {
         TabView(selection: $selectedTab) {

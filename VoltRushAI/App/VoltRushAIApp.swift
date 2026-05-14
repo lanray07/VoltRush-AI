@@ -20,12 +20,22 @@ private struct RootEntryView: View {
 
     var body: some View {
         Group {
-            if hasCompletedOnboarding {
+            if hasCompletedOnboarding || ReviewDemoMode.isEnabled {
                 AppShellView()
             } else {
                 OnboardingView()
             }
         }
         .background(VoltTheme.background.ignoresSafeArea())
+    }
+}
+
+enum ReviewDemoMode {
+    static var isEnabled: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("--review-paywall-demo")
+        #else
+        false
+        #endif
     }
 }

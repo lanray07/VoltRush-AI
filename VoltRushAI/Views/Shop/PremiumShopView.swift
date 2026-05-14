@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct PremiumShopView: View {
+    @Environment(\.openURL) private var openURL
     @EnvironmentObject private var appModel: AppViewModel
     @EnvironmentObject private var storeService: StoreService
+    @State private var didOpenReviewDemoTerms = false
     private let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
     private let privacyURL = URL(string: "https://github.com/lanray07/VoltRush-AI/blob/main/PRIVACY_POLICY.md")!
 
@@ -20,7 +22,10 @@ struct PremiumShopView: View {
             }
         }
         .voltNavigationTitle("Premium")
-        .task { await storeService.loadProducts() }
+        .task {
+            await storeService.loadProducts()
+            await openTermsForReviewRecordingIfNeeded()
+        }
         .alert("Store", isPresented: .constant(storeService.lastStoreMessage != nil), actions: {
             Button("OK") { storeService.lastStoreMessage = nil }
         }, message: {
@@ -166,5 +171,13 @@ struct PremiumShopView: View {
         default:
             return "Shown on the App Store purchase sheet"
         }
+    }
+
+    @MainActor
+    private func openTermsForReviewRecordingIfNeeded() async {
+        guard ReviewDemoMode.isEnabled, !didOpenReviewDemoTerms else { return }
+        didOpenReviewDemoTerms = true
+        try? await Task.sleep(nanoseconds: 8_000_000_000)
+        openURL(termsURL)
     }
 }
