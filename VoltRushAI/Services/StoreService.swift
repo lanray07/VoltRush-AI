@@ -59,22 +59,15 @@ final class StoreService: ObservableObject {
 
         do {
             let result = try await storeProduct.purchase()
-            switch result {
-            case .success(let verification):
-                let transaction = try checkVerified(verification)
-                applyEntitlement(for: transaction.productID, appModel: appModel)
-                await transaction.finish()
-                lastStoreMessage = "\(product.displayName) purchase completed."
-            case .pending:
-                lastStoreMessage = "\(product.displayName) purchase is pending approval."
-            case .userCancelled:
-                lastStoreMessage = "Purchase cancelled."
-            @unknown default:
-                lastStoreMessage = "The purchase could not be completed. Please try again."
-            }
+            await processPurchaseResult(result, productName: product.displayName, appModel: appModel)
         } catch {
             lastStoreMessage = "The purchase could not be completed. Please try again."
         }
+    }
+
+    func processSubscriptionStoreCompletion(productName: String, result: Result<Product.PurchaseResult, any Error>, appModel: AppViewModel) async {
+        guard case .success(let purchaseResult) = result else { return }
+        await processPurchaseResult(purchaseResult, productName: productName, appModel: appModel)
     }
 
     func restorePurchases(appModel: AppViewModel) async {
@@ -103,6 +96,26 @@ final class StoreService: ObservableObject {
             return safe
         case .unverified:
             throw StoreError.failedVerification
+        }
+    }
+
+    private func processPurchaseResult(_ result: Product.PurchaseResult, productName: String, appModel: AppViewModel) async {
+        do {
+            switch result {
+            case .success(let verification):
+                let transaction = try checkVerified(verification)
+                applyEntitlement(for: transaction.productID, appModel: appModel)
+                await transaction.finish()
+                lastStoreMessage = "\(productName) purchase completed."
+            case .pending:
+                lastStoreMessage = "\(productName) purchase is pending approval."
+            case .userCancelled:
+                lastStoreMessage = "Purchase cancelled."
+            @unknown default:
+                lastStoreMessage = "The purchase could not be completed. Please try again."
+            }
+        } catch {
+            lastStoreMessage = "The purchase could not be verified. Please contact support."
         }
     }
 
